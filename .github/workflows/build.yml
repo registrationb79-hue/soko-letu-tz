@@ -2,39 +2,36 @@ name: Build Soko Letu Tz APK
 
 on:
   push:
-    branches: [ main ]
+      branches: [ main ]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+      jobs:
+        build:
+            runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+                steps:
+                      - name: Checkout code
+                              uses: actions/checkout@v4
 
-    - name: Set up Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'zulu'
-        java-version: '17'
+                                    - name: Set up Java
+                                            uses: actions/setup-java@v4
+                                                    with:
+                                                              distribution: 'zulu'
+                                                                        java-version: '17'
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.27.1'
-         
+                                                                              - name: Set up Flutter
+                                                                                      uses: subosito/flutter-action@v2
+                                                                                              with:
+                                                                                                        flutter-version: '3.24.2'
 
+                                                                                                              - name: Install dependencies
+                                                                                                                      run: flutter pub get
 
-        
+                                                                                                                            - name: Build APK
+                                                                                                                                    run: flutter build apk --debug
 
-    - name: Install dependencies
-      run: flutter pub get
-
-    - name: Build APK
-      run: flutter build apk --debug
-
-    - name: Upload APK artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: soko-letu-tz-apk
-        path: build/app/outputs/flutter-apk/app-debug.apk
+                                                                                                                                          - name: Upload APK artifact
+                                                                                                                                                  uses: actions/upload-artifact@v4
+                                                                                                                                                          with:
+                                                                                                                                                                    name: app-debug
+                                                                                                                                                                              path: build/app/outputs/flutter-apk/app-debug.apk
+                                                                                                                                                                              
