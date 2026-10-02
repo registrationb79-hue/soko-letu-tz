@@ -24,7 +24,7 @@ jobs:
         flutter-version: 'stable'
 
 
-        channel: 'stable'
+        
 
     - name: Install dependencies
       run: flutter pub get
