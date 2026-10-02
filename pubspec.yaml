@@ -1,7 +1,6 @@
 name: soko_letu_tz
 description: A modern Tanzanian e-commerce application.
 publish_to: "none"
-
 version: 1.0.0+1
 
 environment:
