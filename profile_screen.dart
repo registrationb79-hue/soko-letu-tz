@@ -2,20 +2,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../services/auth_service.dart';
-
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-
-    // Get the currently authenticated Firebase user.
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
+
       appBar: AppBar(
         title: const Text(
           'Wasifu Wangu',
@@ -27,6 +24,7 @@ class ProfileScreen extends ConsumerWidget {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
+
       body: user == null
           ? const _NotLoggedInState()
           : SafeArea(
@@ -38,125 +36,141 @@ class ProfileScreen extends ConsumerWidget {
                   32,
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // ------------------------------------------------------
-                    // PROFILE HEADER
-                    // ------------------------------------------------------
-                    _ProfileHeader(
-                      user: user,
-                    ),
+                    _ProfileHeader(user: user),
 
                     const SizedBox(height: 24),
 
-                    // ------------------------------------------------------
-                    // ACCOUNT INFORMATION
-                    // ------------------------------------------------------
-                    _SectionTitle(
+                    _ProfileSection(
                       title: 'Taarifa za Akaunti',
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    _ProfileTile(
-                      icon: Icons.email_outlined,
-                      title: 'Barua pepe',
-                      subtitle: user.email ?? 'Haijawekwa',
-                    ),
-
-                    _ProfileTile(
-                      icon: Icons.verified_user_outlined,
-                      title: 'Hali ya akaunti',
-                      subtitle: user.emailVerified
-                          ? 'Barua pepe imethibitishwa'
-                          : 'Barua pepe haijathibitishwa',
-                      trailing: Icon(
-                        user.emailVerified
-                            ? Icons.verified_rounded
-                            : Icons.info_outline_rounded,
-                        color: user.emailVerified
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-
-                    _ProfileTile(
-                      icon: Icons.phone_outlined,
-                      title: 'Namba ya simu',
-                      subtitle: user.phoneNumber ?? 'Haijawekwa',
+                      children: [
+                        _ProfileItem(
+                          icon: Icons.email_outlined,
+                          title: 'Barua pepe',
+                          subtitle: user.email ?? 'Haijawekwa',
+                        ),
+                        _ProfileItem(
+                          icon: Icons.phone_outlined,
+                          title: 'Namba ya simu',
+                          subtitle: user.phoneNumber ?? 'Haijawekwa',
+                        ),
+                        _ProfileItem(
+                          icon: Icons.verified_user_outlined,
+                          title: 'Hali ya akaunti',
+                          subtitle: user.emailVerified
+                              ? 'Barua pepe imethibitishwa'
+                              : 'Barua pepe haijathibitishwa',
+                        ),
+                      ],
                     ),
 
                     const SizedBox(height: 20),
 
-                    // ------------------------------------------------------
-                    // ACCOUNT ACTIONS
-                    // ------------------------------------------------------
-                    _SectionTitle(
-                      title: 'Mipangilio ya Akaunti',
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    _ProfileTile(
-                      icon: Icons.person_outline_rounded,
-                      title: 'Taarifa binafsi',
-                      subtitle: 'Hariri taarifa zako',
-                      onTap: () {
-                        _showComingSoon(context);
-                      },
-                    ),
-
-                    _ProfileTile(
-                      icon: Icons.location_on_outlined,
-                      title: 'Anwani za Delivery',
-                      subtitle: 'Simamia anwani zako',
-                      onTap: () {
-                        _showComingSoon(context);
-                      },
-                    ),
-
-                    _ProfileTile(
-                      icon: Icons.receipt_long_outlined,
-                      title: 'Maagizo yangu',
-                      subtitle: 'Angalia historia ya manunuzi',
-                      onTap: () {
-                        _showComingSoon(context);
-                      },
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // ------------------------------------------------------
-                    // SIGN OUT BUTTON
-                    // ------------------------------------------------------
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          _showSignOutDialog(
-                            context,
-                            ref,
-                          );
-                        },
-                        icon: Icon(
-                          Icons.logout_rounded,
-                          color: theme.colorScheme.error,
+                    _ProfileSection(
+                      title: 'Mipangilio',
+                      children: [
+                        _ProfileItem(
+                          icon: Icons.person_outline,
+                          title: 'Hariri wasifu',
+                          subtitle: 'Badilisha taarifa zako',
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Sehemu ya kuhariri wasifu itaongezwa hivi karibuni.',
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        label: Text(
-                          'Toka kwenye Akaunti',
-                          style: TextStyle(
-                            color: theme.colorScheme.error,
-                            fontWeight: FontWeight.w800,
-                          ),
+                        _ProfileItem(
+                          icon: Icons.location_on_outlined,
+                          title: 'Anwani za delivery',
+                          subtitle: 'Simamia anwani zako',
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Sehemu ya anwani itaongezwa hivi karibuni.',
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                            color: theme.colorScheme.error
-                                .withValues(alpha: 0.5),
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
+                        _ProfileItem(
+                          icon: Icons.notifications_outlined,
+                          title: 'Arifa',
+                          subtitle: 'Simamia arifa za app',
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Mipangilio ya arifa itaongezwa hivi karibuni.',
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    _ProfileSection(
+                      title: 'Msaada',
+                      children: [
+                        _ProfileItem(
+                          icon: Icons.help_outline,
+                          title: 'Msaada na Maswali',
+                          subtitle: 'Pata msaada kuhusu Soko Letu Tz',
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Sehemu ya msaada itaongezwa hivi karibuni.',
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        _ProfileItem(
+                          icon: Icons.info_outline,
+                          title: 'Kuhusu Soko Letu Tz',
+                          subtitle: 'Maelezo kuhusu app',
+                          onTap: () {
+                            showAboutDialog(
+                              context: context,
+                              applicationName: 'Soko Letu Tz',
+                              applicationVersion: '1.0.0',
+                              applicationLegalese:
+                                  '© 2026 Soko Letu Tz',
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 28),
+
+                    FilledButton.icon(
+                      onPressed: () => _showLogoutDialog(context),
+                      icon: const Icon(Icons.logout),
+                      label: const Text(
+                        'Toka kwenye akaunti',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(
+                          double.infinity,
+                          52,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
                         ),
                       ),
                     ),
@@ -167,63 +181,25 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  void _showSignOutDialog(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
-    showDialog<void>(
+  Future<void> _showLogoutDialog(BuildContext context) async {
+    final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text(
-            'Toka kwenye akaunti?',
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-            ),
-          ),
+          title: const Text('Toka kwenye akaunti'),
           content: const Text(
-            'Utaondolewa kwenye akaunti yako ya SOKO LETU Tz.',
+            'Una uhakika unataka kutoka kwenye akaunti yako?',
           ),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(dialogContext).pop();
+                Navigator.of(dialogContext).pop(false);
               },
               child: const Text('Ghairi'),
             ),
             FilledButton(
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-
-                try {
-                  final authService =
-                      ref.read(authServiceProvider);
-
-                  await authService.signOut();
-
-                  if (!context.mounted) return;
-
-                  // Return to the authentication screen.
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/auth',
-                    (route) => false,
-                  );
-                } catch (error) {
-                  if (!context.mounted) return;
-
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      SnackBar(
-                        content: const Text(
-                          'Imeshindikana kutoka kwenye akaunti.',
-                        ),
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.error,
-                      ),
-                    );
-                }
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
               },
               child: const Text('Toka'),
             ),
@@ -231,25 +207,50 @@ class ProfileScreen extends ConsumerWidget {
         );
       },
     );
-  }
 
-  void _showComingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
+    if (shouldLogout != true) {
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.signOut();
+
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Sehemu hii itaongezwa kwenye hatua inayofuata.',
-          ),
-          behavior: SnackBarBehavior.floating,
+          content: Text('Umetoka kwenye akaunti.'),
         ),
       );
+    } on FirebaseAuthException catch (e) {
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Imeshindikana kutoka: ${e.message ?? 'Jaribu tena.'}',
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Kuna tatizo limetokea. Tafadhali jaribu tena.',
+          ),
+        ),
+      );
+    }
   }
 }
-
-// ---------------------------------------------------------------------------
-// PROFILE HEADER
-// ---------------------------------------------------------------------------
 
 class _ProfileHeader extends StatelessWidget {
   const _ProfileHeader({
@@ -262,186 +263,205 @@ class _ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final String displayName = user.displayName?.trim().isNotEmpty == true
+    final displayName = user.displayName?.trim().isNotEmpty == true
         ? user.displayName!.trim()
-        : 'Mteja wa SOKO LETU';
+        : 'Mtumiaji wa Soko Letu';
 
-    final String initial = displayName
-        .substring(0, 1)
-        .toUpperCase();
+    final email = user.email ?? 'Barua pepe haijawekwa';
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            theme.colorScheme.primary,
-            theme.colorScheme.primaryContainer,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(24),
+    return Card(
+      elevation: 0,
+      color: theme.colorScheme.primaryContainer,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Column(
-        children: [
-          // Avatar
-          CircleAvatar(
-            radius: 42,
-            backgroundColor: Colors.white.withValues(
-              alpha: 0.18,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 36,
+              backgroundColor: theme.colorScheme.primary,
+              backgroundImage: user.photoURL != null
+                  ? NetworkImage(user.photoURL!)
+                  : null,
+              child: user.photoURL == null
+                  ? Text(
+                      _getInitial(displayName),
+                      style: TextStyle(
+                        color: theme.colorScheme.onPrimary,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    )
+                  : null,
             ),
-            backgroundImage: user.photoURL != null
-                ? NetworkImage(user.photoURL!)
-                : null,
-            child: user.photoURL == null
-                ? Text(
-                    initial,
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
+
+            const SizedBox(width: 16),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    displayName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
                     ),
-                  )
-                : null,
-          ),
+                  ),
 
-          const SizedBox(height: 14),
+                  const SizedBox(height: 4),
 
-          Text(
-            displayName,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.titleLarge?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
+                  Text(
+                    email,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium,
+                  ),
 
-          const SizedBox(height: 5),
+                  const SizedBox(height: 8),
 
-          Text(
-            user.email ?? 'Mtumiaji',
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(
-                alpha: 0.88,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Akaunti hai',
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
+  String _getInitial(String name) {
+    final trimmedName = name.trim();
+
+    if (trimmedName.isEmpty) {
+      return 'S';
+    }
+
+    return trimmedName.substring(0, 1).toUpperCase();
+  }
 }
 
-// ---------------------------------------------------------------------------
-// SECTION TITLE
-// ---------------------------------------------------------------------------
-
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({
+class _ProfileSection extends StatelessWidget {
+  const _ProfileSection({
     required this.title,
+    required this.children,
   });
 
   final String title;
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: theme.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w800,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 4,
+            bottom: 10,
+          ),
+          child: Text(
+            title,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
         ),
-      ),
+
+        Card(
+          elevation: 0,
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Column(
+            children: children,
+          ),
+        ),
+      ],
     );
   }
 }
 
-// ---------------------------------------------------------------------------
-// PROFILE TILE
-// ---------------------------------------------------------------------------
-
-class _ProfileTile extends StatelessWidget {
-  const _ProfileTile({
+class _ProfileItem extends StatelessWidget {
+  const _ProfileItem({
     required this.icon,
     required this.title,
     required this.subtitle,
-    this.trailing,
     this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
-  final Widget? trailing;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      elevation: 0,
-      color: theme.colorScheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: theme.colorScheme.outlineVariant,
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 5,
+      ),
+
+      leading: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(
+          icon,
+          color: theme.colorScheme.primary,
         ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 4,
+
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontWeight: FontWeight.w700,
         ),
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(13),
-          ),
-          child: Icon(
-            icon,
-            color: theme.colorScheme.onPrimaryContainer,
-          ),
-        ),
-        title: Text(
-          title,
-          style: theme.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 3),
-          child: Text(
-            subtitle,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        trailing: trailing ??
-            (onTap != null
-                ? const Icon(
-                    Icons.chevron_right_rounded,
-                  )
-                : null),
-        onTap: onTap,
       ),
+
+      subtitle: Text(
+        subtitle,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+
+      trailing: onTap != null
+          ? const Icon(
+              Icons.chevron_right,
+            )
+          : null,
+
+      onTap: onTap,
     );
   }
 }
-
-// ---------------------------------------------------------------------------
-// NOT LOGGED IN STATE
-// ---------------------------------------------------------------------------
 
 class _NotLoggedInState extends StatelessWidget {
   const _NotLoggedInState();
@@ -456,38 +476,44 @@ class _NotLoggedInState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.person_outline_rounded,
-                size: 52,
-                color: theme.colorScheme.onPrimaryContainer,
-              ),
+            Icon(
+              Icons.person_outline,
+              size: 80,
+              color: theme.colorScheme.primary,
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             Text(
               'Hujaingia kwenye akaunti',
               textAlign: TextAlign.center,
               style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w800,
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
 
             Text(
-              'Ingia ili kuona taarifa za akaunti yako.',
+              'Ingia kwenye akaunti yako ili kuona taarifa za wasifu wako.',
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+              style: theme.textTheme.bodyLarge,
+            ),
+
+            const SizedBox(height: 24),
+
+            FilledButton.icon(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Tafadhali tumia ukurasa wa kuingia.',
+                    ),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.login),
+              label: const Text('Ingia'),
             ),
           ],
         ),
