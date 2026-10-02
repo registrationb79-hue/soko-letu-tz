@@ -4,8 +4,8 @@ publish_to: 'none'
 
 version: 1.0.0+1
 
+
 environment:
-  environment:
     sdk: '>=3.5.0 <4.0.0'
   
 
