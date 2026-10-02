@@ -1,0 +1,32 @@
+name: soko_letu_tz
+description: A modern Tanzanian e-commerce marketplace.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.13.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Firebase
+  firebase_core: ^4.15.0
+  firebase_auth: ^6.7.0
+  cloud_firestore: ^6.10.0
+  
+  # UI & Typography
+  google_fonts: ^9.0.0
+  cupertino_icons: ^2.0.0
+  
+  # State Management
+  flutter_riverpod: ^2.6.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
